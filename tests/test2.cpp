@@ -6,7 +6,7 @@ TEST(Transaction, Banking)
 {
   const int sum1 = 500, sum2 = 300, fee = 100;
 
-  Account a1(123, sum1), a2(456, sum2);
+  Account a1(37, sum1), a2(73, sum2);
   Transaction test;
   
   //set & get
