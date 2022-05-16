@@ -1,0 +1,36 @@
+name: testing
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        
+      - name: install lcov
+        run: sudo apt-get install -y lcov
+        
+      - name: update_gtest
+        run: |
+          cd tests/third-party/gtest
+          git submodule init && git submodule update
+          
+      - name: build_tests
+        shell: bash
+        run: |
+          cd tests/
+          cmake -H. -B_build -D BUILD_TESTS=ON
+          cmake --build _build
+          
+      - name: run_tests
+        shell: bash
+        run: tests/_build/check
+          
+      - name: creating_lcov_file
+        run: lcov -o ./coverage/lcov.info -c -d ./tests/_build/CMakeFiles/check.dir/ --include *.cpp
+
+      - name: coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
